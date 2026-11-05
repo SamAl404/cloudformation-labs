@@ -56,6 +56,58 @@ Resources:
       Environment:
         Variables:
           TABLE_NAME: !Ref DynamoDBTable 
+
+  ApiInvokePermission:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref ApiFunction
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub 'arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${HttpApi}/*'
+
+  ApiIntegration:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId: !Ref HttpApi
+      IntegrationType: AWS_PROXY
+      IntegrationUri: !GetAtt ApiFunction.Arn
+      PayloadFormatVersion: '1.0' 
+
+  GetItemRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /items/{id}'
+      Target: !Sub 'integrations/${ApiIntegration}'
+  
+  GetItemsRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'GET /items'
+      Target: !Sub 'integrations/${ApiIntegration}'
+
+  PostItemRoute:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId: !Ref HttpApi
+      RouteKey: 'POST /items'
+      Target: !Sub 'integrations/${ApiIntegration}'    
+
+  ApiStage:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId: !Ref HttpApi
+      StageName: $default
+      AutoDeploy: true
+
+  HttpApi:
+   Type: AWS::ApiGatewayV2::Api
+   Properties:
+     Name: PracticeAPI
+     ProtocolType: HTTP  
+
+
 Outputs:
   DynamoDBTableName:
     Description: The name of the DynamoDB table.
@@ -66,3 +118,6 @@ Outputs:
   LambdaFunctionName:
     Description: The name of the Lambda function.
     Value: !Ref ApiFunction
+  ApiUrl:
+    Description: The URL of the API Gateway endpoint.
+    Value: !GetAtt HttpApi.ApiEndpoint
