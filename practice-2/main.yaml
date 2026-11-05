@@ -53,7 +53,6 @@ Resources:
       Handler: index.handler
       Role: !GetAtt LambdaExecutionRole.Arn
       Code: src/
-      Handler: index.handler
       Environment:
         Variables:
           TABLE_NAME: !Ref DynamoDBTable 
