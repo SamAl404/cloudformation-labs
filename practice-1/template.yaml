@@ -1,0 +1,18 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: An S3 bucket
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: This is a practice bucket
+
+Resources:
+  MyBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+
+Outputs:
+  BucketArn:
+    Description: The ARN of the S3 bucket
+    Value: !GetAtt MyBucket.Arn

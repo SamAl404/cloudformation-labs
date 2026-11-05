@@ -1,0 +1,27 @@
+#This stack is used to create an S3 bucket for storing Lambda code artifacts. It is a separate stack to allow for independent management of the Lambda code bucket.
+AWSTemplateFormatVersion: '2010-09-09'
+Description: This template creates an S3 bucket for storing Lambda code artifacts.
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: The name of the S3 bucket to be created for storing Lambda code artifacts.
+
+Resources:
+  LambdaCodeBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Ref BucketName
+      LifecycleConfiguration:
+        Rules:
+          - Status: Enabled
+            ExpirationInDays: 7
+      
+Outputs:
+  S3BucketName:
+    Description: The name of the S3 bucket created for storing Lambda code artifacts.
+    Value: !Ref BucketName
+
+  s3BucketArn:
+    Description: The ARN of the S3 bucket created for storing Lambda code artifacts.
+    Value: !GetAtt LambdaCodeBucket.Arn
