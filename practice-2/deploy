@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/env bash
 set -e
 
 aws cloudformation package --template-file main.yaml --s3-bucket lambda-bucket-245623 --output-template-file packaged.yaml
