@@ -1,0 +1,5 @@
+#!/usr/bin/bash
+set -e
+
+aws cloudformation package --template-file main.yaml --s3-bucket lambda-bucket-245623 --output-template-file packaged.yaml
+aws cloudformation deploy --template-file packaged.yaml --stack-name practice-table --parameter-overrides TableName=practice-table --capabilities CAPABILITY_IAM
